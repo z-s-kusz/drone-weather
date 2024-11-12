@@ -1,5 +1,10 @@
 import type { Location } from '$lib/types';
 
+// NOTE: I could have just saved all locations as one array of location objects
+// wanted to test out using storage as a table - the only thing it made more efficient is getting 1 by id
+// everything else got a lot more boilerplaty and its harder to remove an item manually
+// if there are slow downs from accessing storage multiple times per function I'll refactor
+
 export function getLocations(): Location[] {
     let locations: Location[] = [];
     const locationIDsJSON: string | null = localStorage.getItem('locations');
@@ -11,11 +16,13 @@ export function getLocations(): Location[] {
         }
 
         locationIDs.forEach((locationID) => {
-            const locationJSON = localStorage.get(locationID);
-            const location: Location | null = JSON.parse(locationJSON);
-
-            if (!location) console.error('saved location had no location data', locationID);
-            else locations.push(location);
+            const locationJSON = localStorage.getItem(locationID);
+            if (!locationJSON) {
+                console.error('saved location had no location data', locationID);
+            } else {
+                const location: Location = JSON.parse(locationJSON);
+                locations.push(location);
+            }
         });
     }
 
@@ -23,7 +30,7 @@ export function getLocations(): Location[] {
 }
 
 export function getLocation(id: string): Location | null {
-    const locationJSON = localStorage.get(id);
+    const locationJSON = localStorage.getItem(id);
     if (locationJSON) return JSON.parse(locationJSON) as Location;
     else return null;
 }
@@ -39,9 +46,7 @@ export function addLocation(newLocation: Location): void {
     }
     localStorage.setItem(newLocation.id, JSON.stringify(newLocation));
 
-    if (newLocation.isFavorite) {
-        setFavoriteLocation(newLocation);
-    }
+    if (newLocation.isFavorite) setFavoriteLocation(newLocation);
 }
 
 export function removeLocation(deletedLocation: Location): Location[] {
@@ -59,8 +64,9 @@ export function removeLocation(deletedLocation: Location): Location[] {
     return getLocations();
 }
 
-export function updateLocation(location: Location) {
+export function updateLocation(location: Location, updateFavs = false) {
     localStorage.setItem(location.id, JSON.stringify(location));
+    if (updateFavs && location.isFavorite) setFavoriteLocation(location);
 }
 
 export function setFavoriteLocation(favLocation: Location): Location[] {
@@ -70,7 +76,7 @@ export function setFavoriteLocation(favLocation: Location): Location[] {
         updateLocation({
             ...location,
             isFavorite: location.id === favLocation.id,
-        });
+        }, false);
     });
 
     return getLocations();
