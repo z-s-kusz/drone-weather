@@ -81,3 +81,13 @@ export function setFavoriteLocation(favLocation: Location): Location[] {
 
     return getLocations();
 }
+
+export function getMainLocation(): Location | null {
+    const locations = getLocations();
+
+    const favLocation = locations.find((location) => location.isFavorite);
+
+    if (favLocation) return favLocation;
+    else if (locations.length > 0) return locations[0];
+    else return null;
+}

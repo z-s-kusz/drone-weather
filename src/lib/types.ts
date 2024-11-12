@@ -5,3 +5,17 @@ export type Location = {
     lat: string;
     long: string;
 }
+
+export type WeatherData = {
+    temp: number;
+    wind10m: number;
+    wind80m: number;
+    precip: number;
+};
+
+export type WeatherCardData = {
+    title: string;
+    summary: string;
+    link: string;
+    weather: WeatherData;
+};

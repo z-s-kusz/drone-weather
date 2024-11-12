@@ -5,7 +5,7 @@
 </script>
 
 <header>
-    <h1>Tiny Drone Outdoor Flying Forecast</h1>
+    <h1><a href="/">The Tiny Drone Outdoor Flying Forecast</a></h1>
 </header>
 
 {@render children()}

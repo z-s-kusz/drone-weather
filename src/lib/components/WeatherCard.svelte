@@ -13,14 +13,17 @@
     <h2><a href={link}>{title}</a></h2>
     <p>{summary}</p>
     <div class="weather">
-        <span>{weather.temp}</span>
-        <span>{weather.wind}</span>
-        <span>{weather.precipitation}</span>
+        <span>Temp: {weather.temp} &deg;F. |</span>
+        <span>Wind: {weather.wind10m}mph |</span>
+        <span>Wind at 80 meters: {weather.wind80m}mph |</span>
+        <span>Precipitation: {weather.precip}%</span>
     </div>
 </section>
 
 <style>
     .card {
-        border: 4px solid blue;
+        border: 4px solid indigo;
+        border-radius: var(--bd-radius);
+        padding: 2rem;
     }
 </style>
