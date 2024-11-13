@@ -4,27 +4,44 @@
 	import { getMainLocation } from '$lib/locations-storage.js';
 	import { defaultWeatherCardData } from '$lib/weather-card-data-builder.js';
 	import type { Location, WeatherCardData } from '$lib/types.js';
+	import { getCurrentWeatherCard } from '$lib/api/forecast';
 
-    let { data } = $props();
     let location: Location | null = $state(null);
     let current: WeatherCardData = $state(defaultWeatherCardData('Current'));
     let today: WeatherCardData = $state(defaultWeatherCardData('Today'));
     let sevenDay: WeatherCardData = $state(defaultWeatherCardData('7 Day Forecast'));
-    console.log(data.forecast);
+    let error = $state('');
+    let loading = $state(false);
 
     if (browser) {
         location = getMainLocation();
     }
 
     $effect(() => {
-        if (!location) return;
-
-
+        setCurrent();
     });
+
+    async function setCurrent() {
+        if (!location) return;
+        loading = true;
+
+        try {
+            current = await getCurrentWeatherCard(location);
+            error = '';
+        } catch(error) {
+            error = 'Error fetching data. Refresh to try again.';
+        } finally {
+            loading = false;
+        }
+    }
 </script>
 
-{#if data.errorMessage}
-    <p>{data.errorMessage}</p>
+{#if error}
+    <p>{error}</p>
+{/if}
+
+{#if loading}
+    <p>loading...</p>
 {/if}
 
 {#if !location}

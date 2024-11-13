@@ -9,13 +9,15 @@ export type Location = {
 export type WeatherData = {
     temp: number;
     wind10m: number;
-    wind80m: number;
+    windGusts10m: number;
+    wind80m?: number;
     precip: number;
 };
 
 export type WeatherCardData = {
     title: string;
     summary: string;
+    score: number;
     link: string;
     weather: WeatherData;
 };
