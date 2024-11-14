@@ -19,5 +19,18 @@ export type WeatherCardData = {
     summary: string;
     score: number;
     link: string;
-    weather: WeatherData;
+    weather?: WeatherData;
+};
+
+export type SnapshotSummary = {
+    date: string;
+    score: number;
+    summary: string;
+}
+
+export type TimeSpanSumamryCard = {
+    title: string;
+    link?: string;
+    summary: string;
+    snapshots: SnapshotSummary[];
 };

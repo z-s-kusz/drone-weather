@@ -4,11 +4,10 @@
 	import { getMainLocation } from '$lib/locations-storage.js';
 	import { defaultWeatherCardData } from '$lib/weather-card-data-builder.js';
 	import type { Location, WeatherCardData } from '$lib/types.js';
-	import { getCurrentWeatherCard } from '$lib/api/forecast';
+	import { getCurrentWeather } from '$lib/api/forecast';
 
     let location: Location | null = $state(null);
     let current: WeatherCardData = $state(defaultWeatherCardData('Current'));
-    let today: WeatherCardData = $state(defaultWeatherCardData('Today'));
     let sevenDay: WeatherCardData = $state(defaultWeatherCardData('7 Day Forecast'));
     let error = $state('');
     let loading = $state(false);
@@ -18,15 +17,15 @@
     }
 
     $effect(() => {
-        setCurrent();
+        getAllData();
     });
 
-    async function setCurrent() {
+    async function getAllData() {
         if (!location) return;
         loading = true;
 
         try {
-            current = await getCurrentWeatherCard(location);
+            current = await getCurrentWeather(location);
             error = '';
         } catch(error) {
             error = 'Error fetching data. Refresh to try again.';
@@ -48,8 +47,6 @@
     <a href="/manage-locations">Add a location to get started!</a>
 {/if}
 
-<WeatherCard title="Current" link="" summary={current.summary} weather={current.weather} />
+<WeatherCard title="Current" summary={current.summary} weather={current.weather} score={current.score}/>
 
-<WeatherCard title="Today" link="" summary={today.summary} weather={today.weather} />
-
-<WeatherCard title="7 Day Forecast" link="" summary={sevenDay.summary} weather={sevenDay.weather} />
+<WeatherCard title="7 Day Forecast" summary={sevenDay.summary} />

@@ -4,11 +4,12 @@
     interface Props {
         title: string;
         summary: string;
+        score?: number;
         weather?: WeatherData;
-        link: string;
+        link?: string;
     }
 
-    let { title, summary, weather, link }: Props = $props();
+    let { title, summary, weather, link, score }: Props = $props();
 </script>
 
 <section class="card">
@@ -19,6 +20,10 @@
             {title}
         {/if}
     </h2>
+
+    {#if score}
+        <p>{score} / 5 Rating</p>
+    {/if}
 
     <p>{summary}</p>
 
@@ -34,10 +39,8 @@
 </section>
 
 <style>
-    h2, .weather {
-        text-align: center;
-    }
     .card {
+        text-align: center;
         border: 4px solid indigo;
         border-radius: var(--bd-radius);
         padding: 2rem;

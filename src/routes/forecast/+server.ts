@@ -1,6 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import { fetchWeatherApi } from 'openmeteo';
-import type { WeatherCardData } from '$lib/types';
+import type { TimeSpanSumamryCard, WeatherCardData } from '$lib/types';
+import { generateSnapshotSummary, generateTimeSpanSummary } from '$lib/generate-summaries';
 
 const url = "https://api.open-meteo.com/v1/forecast";
 
@@ -29,49 +30,18 @@ export async function GET({ url }) {
     }
 }
 
-async function getForecast(lat: string, long: string) {
-    try {
-        const params = {
-            "latitude": lat,
-            "longitude": long,
-            "hourly": ["temperature_2m", "precipitation", "wind_speed_10m", "wind_speed_80m", "wind_direction_10m", "wind_direction_80m", "wind_gusts_10m", "temperature_80m"],
-            "temperature_unit": "fahrenheit",
-            "wind_speed_unit": "mph",
-            "precipitation_unit": "inch",
-            "timezone": "America/Chicago",
-            "forecast_days": 1
-        };
-        const responses = await fetchWeatherApi(url, params);
-        const response = responses[0];
-        return processResponse(response);
-    } catch (error) {
-        console.error('getForecast err', error);
-        throw new Error(`Error getting forecast for ${lat}, ${long}`);
-    }
-}
+async function getSevenDaySummary(lat: number, long: number): Promise<TimeSpanSumamryCard> {
+    const weather = {};
+    const snapshots = generateTimeSpanSummary(weather)
 
-function processResponse(response: any) {
-    // Attributes for timezone and location
-    const utcOffsetSeconds = response.utcOffsetSeconds();
-    const timezone = response.timezone();
-    const hourly = response.hourly()!;
-
-    const weatherData = {
-        hourly: {
-            time: range(Number(hourly.time()), Number(hourly.timeEnd()), hourly.interval()).map(
-                (t) => new Date((t + utcOffsetSeconds) * 1000)
-            ),
-            temperature2m: hourly.variables(0)!.valuesArray()!,
-            precipitation: hourly.variables(1)!.valuesArray()!,
-            windSpeed10m: hourly.variables(2)!.valuesArray()!,
-            windSpeed80m: hourly.variables(3)!.valuesArray()!,
-            windDirection10m: hourly.variables(4)!.valuesArray()!,
-            windDirection80m: hourly.variables(5)!.valuesArray()!,
-            windGusts10m: hourly.variables(6)!.valuesArray()!,
-            temperature80m: hourly.variables(7)!.valuesArray()!,
-        },
+    const timeSpanSummary: TimeSpanSumamryCard = {
+        title: 'Current',
+        summary: '', // generate from snapshots data
+        link: '/daily/',
+        snapshots,
     };
-    return weatherData;
+
+    return timeSpanSummary;
 }
 
 // Helper function to form time ranges
@@ -99,7 +69,7 @@ async function getCurrentSummary(lat: number, long: number): Promise<WeatherCard
 		precipitation: current.variables(1)!.value(),
 		windSpeed10m: current.variables(2)!.value(),
 		windDirection10m: current.variables(3)!.value(),
-		windGusts10m: current.variables(4)!.value(), // use this too!
+		windGusts10m: current.variables(4)!.value(),
     };
 
     const { summary, score } = generateSnapshotSummary(weatherData);
@@ -118,56 +88,4 @@ async function getCurrentSummary(lat: number, long: number): Promise<WeatherCard
     };
 
     return weatherCardData;
-}
-
-// let summary = 'Perfect weather for even the itty-bittiest little drone to fly outside!';
-// let score = 5;
-function generateSnapshotSummary(weather: any): { summary: string, score: number} {
-    let summary = '';
-    let score = 0;
-
-    if (weather.temperature2m <= 40) {
-        summary = 'Too cold to fly tiny drones outside.';
-        score = 0;
-        return { summary, score };
-    }
-    if (weather.precipitation >= 66) {
-        summary = 'Too wet to fly.';
-        score = 0;
-        return { summary, score };
-    }
-    if (weather.wind10m >= 20) {
-        summary = 'Too windy to fly tiny drones outside.'
-        score = 0;
-        return { summary, score };
-    }
-
-    // TODO account for gusts
-    if (weather.wind10m >= 14) {
-        summary += 'Quite breezy. ';
-        score += 1;
-    } else if (weather.wind10m >= 9) {
-        summary += 'Breezy. '
-        score += 2;
-    } else if (weather.wind10m >=4) {
-        score+= 3;
-    } else {
-        summary+= 'Very low wind. '
-        score += 4;
-    }
-
-    if (weather.windGusts10m <= 10) {
-        summary += 'Super light gusts. ';
-        score += 1;
-    }
-
-    if (weather.precipitation >= 33) {
-        summary += 'Chance of precipitation. ';
-    }
-    return { summary, score };
-}
-
-function generateTimeSpanSummary(weather: any): string {
-    let summary = '';
-    return summary;
 }
