@@ -18,7 +18,6 @@ export async function GET({ url }): Promise<any> {
 
     try {
         const weather = await getSevenDayWeatherData(lat, long);
-        return json(weather); // test
         const forecast = await getAIForecast(weather);
         return json(forecast);
     } catch (error) {
@@ -48,27 +47,33 @@ async function getAIForecast(weather: any): Promise<string> {
     }
 }
 
+const maxAllowedWindSpeed = 12;
+const idealWindSpeedMax = 6;
+const gustsMax = 16;
+const minTemp = 40;
+
 const systemMessage = `
-**Prompt:**
-You are a weather forecaster helping drone hobbyists schedule optimal times to fly micro drones (tiny whoops).
+Prompt:
+You are a weather forecaster helping hobbyists schedule optimal times to fly tiny drones.
 These drones are highly sensitive to weather conditions.
 Your task is to identify the best days for flying within a seven-day forecast provided as hourly JSON data.
 
-### Criteria:
+#Criteria:
 1. Wind:
-   - Preferable wind speeds are below 14 mph.
-   - Ideal wind speeds are below 7 mph.
-   - Gusts should be below 16 mph. The lower the better.
+   - Preferable wind speeds are below ${maxAllowedWindSpeed} mph.
+   - Ideal wind speeds are below ${idealWindSpeedMax} mph.
+   - Gusts should be below ${gustsMax} mph. The lower the better.
 2. Temperature:
-   - Hours with temperatures below 40°F should be ignored.
+   - Hours with temperatures below ${minTemp}°F should be ignored.
 3. Rain:
    - Exclude hours with a high chance of rain.
 
-### Output:
+#Output:
 - Identify up to 3 days that best match the criteria.
-- Provide concise, user-friendly recommendations.
+- Provide concise recommendations.
+- Do not mention tempurature, it is assumed any day you mention is warm enough.
 
-#### Examples of Good Responses:
+#Examples of Good Responses:
 1. Positive Example:
    - "Wednesday and Sunday look to be great flying days with light winds and below-average gusts."
 2. Moderate Example:
@@ -76,4 +81,4 @@ Your task is to identify the best days for flying within a seven-day forecast pr
 3. No Suitable Days:
    - "No ideal flying days are forecasted."
 
-**Goal:** Your response should help drone hobbyists quickly decide the best days to fly, prioritizing ease of understanding.`;
+Goal: Your response should help hobbyists decide the best days to fly, prioritizing ease of understanding.`;
