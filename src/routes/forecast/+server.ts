@@ -1,9 +1,7 @@
 import { json, error } from '@sveltejs/kit';
-import { fetchWeatherApi } from 'openmeteo';
 import type { TimeSpanSumamryCard, WeatherCardData } from '$lib/types';
 import { generateSnapshotSummary, generateTimeSpanSummary } from '$lib/generate-summaries';
-
-const url = "https://api.open-meteo.com/v1/forecast";
+import { getCurrentWeatherData, getSevenDayWeatherData } from '$lib/server/get-open-meteo-data';
 
 export async function GET({ url }) {
     const forecastType = url.searchParams.get('type');
@@ -31,7 +29,7 @@ export async function GET({ url }) {
 }
 
 async function getSevenDaySummary(lat: number, long: number): Promise<TimeSpanSumamryCard> {
-    const weather = {};
+    const weather = getSevenDayWeatherData(lat, long);
     const snapshots = generateTimeSpanSummary(weather)
 
     const timeSpanSummary: TimeSpanSumamryCard = {
@@ -44,37 +42,11 @@ async function getSevenDaySummary(lat: number, long: number): Promise<TimeSpanSu
     return timeSpanSummary;
 }
 
-// Helper function to form time ranges
-const range = (start: number, stop: number, step: number) => {
-    return Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
-}
-
 async function getCurrentSummary(lat: number, long: number): Promise<WeatherCardData> {
-    const params = {
-        "latitude": lat,
-        "longitude": long,
-        "current": ["temperature_2m", "precipitation", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m"],
-        "temperature_unit": "fahrenheit",
-        "wind_speed_unit": "mph",
-        "precipitation_unit": "inch",
-        "timezone": "America/Chicago",
-        "forecast_days": 1
-    };
-    const responses = await fetchWeatherApi(url, params);
-    const current = responses[0].current()!;
-
-    // Note: The order of weather variables in the URL query and the indices below need to match!
-    const weatherData = {
-		temperature2m: current.variables(0)!.value(),
-		precipitation: current.variables(1)!.value(),
-		windSpeed10m: current.variables(2)!.value(),
-		windDirection10m: current.variables(3)!.value(),
-		windGusts10m: current.variables(4)!.value(),
-    };
-
+    const weatherData = await getCurrentWeatherData(lat, long);
     const { summary, score } = generateSnapshotSummary(weatherData);
 
-    const weatherCardData: WeatherCardData = {
+    return {
         title: 'Current',
         summary,
         score,
@@ -86,6 +58,4 @@ async function getCurrentSummary(lat: number, long: number): Promise<WeatherCard
             precip: +weatherData.precipitation.toFixed(2),
         }
     };
-
-    return weatherCardData;
 }

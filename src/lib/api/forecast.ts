@@ -9,3 +9,15 @@ export async function getCurrentWeather(location: Location): Promise<WeatherCard
         throw new Error('Error fetching current weather');
     }
 }
+
+export async function getSevenDaySummaryAI(location: Location): Promise<any> {
+    try {
+        const response = await fetch(`/ai-forecast?lat=${location.lat}&long=${location.long}`);
+        const summary = await response.json(); // type after testing
+        console.log(summary)
+        return summary;
+    } catch (error) {
+        console.error(error);
+        return '';
+    }
+}

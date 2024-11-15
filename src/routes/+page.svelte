@@ -4,7 +4,7 @@
 	import { getMainLocation } from '$lib/locations-storage.js';
 	import { defaultWeatherCardData } from '$lib/weather-card-data-builder.js';
 	import type { Location, WeatherCardData } from '$lib/types.js';
-	import { getCurrentWeather } from '$lib/api/forecast';
+	import { getCurrentWeather, getSevenDaySummaryAI } from '$lib/api/forecast';
 
     let location: Location | null = $state(null);
     let current: WeatherCardData = $state(defaultWeatherCardData('Current'));
@@ -26,6 +26,7 @@
 
         try {
             current = await getCurrentWeather(location);
+            await getSevenDaySummaryAI(location);
             error = '';
         } catch(error) {
             error = 'Error fetching data. Refresh to try again.';
