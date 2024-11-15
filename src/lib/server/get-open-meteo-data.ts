@@ -23,14 +23,15 @@ export async function getSevenDayWeatherData(lat: number, long: number): Promise
         time: range(Number(hourly.time()), Number(hourly.timeEnd()), hourly.interval()).map(
             (t) => new Date((t + utcOffsetSeconds) * 1000)
         ),
-        temperature: round(hourly.variables(0)!.valuesArray()!),
-        precipitation: round(hourly.variables(1)!.valuesArray()!),
-        windSpeed: round(hourly.variables(2)!.valuesArray()!),
-        windGusts: round(hourly.variables(3)!.valuesArray()!),
+        temperature: roundArray(hourly.variables(0)!.valuesArray()!),
+        precipitation: roundArray(hourly.variables(1)!.valuesArray()!),
+        windSpeed: roundArray(hourly.variables(2)!.valuesArray()!),
+        windGusts: roundArray(hourly.variables(3)!.valuesArray()!),
         isDay: hourly.variables(4)!.valuesArray()!,
     };
 
-    const daylightOnlyData = filterOutNights(weather);
+    const dayTimeWeather = removeNightForecasts(weather);
+    return dayTimeWeather;
 }
 
 export async function getCurrentWeatherData(lat: number, long: number): Promise<any> {
@@ -62,18 +63,23 @@ const range = (start: number, stop: number, step: number) => {
     return Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
 };
 
-const round = (data: Float32Array): number[] => {
-    console.log('round called');
-    // @ts-ignore hmmm.....
-    return data.map((num) => {
-        return Math.round(num * 100) / 100;
-    });
+const roundArray = (data: Float32Array): number[] => {
+    let roundedNums: number[] = [];
+    data.forEach((num) => roundedNums.push(Math.round(num)));
+    return roundedNums;
 };
 
-const filterOutNights = (weather: any): any => {
+const removeNightForecasts = (weather: any): any => {
     const isDayArray: (1 | 0)[] = weather.isDay;
 
-    Object.entries(weather).forEach(([key, value]) => {
-        // need way to filter from matching index
+    Object.keys(weather).forEach((key) => {
+        if (key === 'isDay') return;
+
+        weather[key] = weather[key].filter((_data: any, i: number) => {
+            return isDayArray[i] === 1;
+        });
     });
+    delete weather.isDay;
+
+    return weather;
 };
