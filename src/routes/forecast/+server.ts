@@ -1,6 +1,6 @@
 import { json, error } from '@sveltejs/kit';
 import type { TimeSpanSumamryCard, WeatherCardData } from '$lib/types';
-import { generateSnapshotSummary, generateTimeSpanSummary } from '$lib/generate-summaries';
+import { generateSnapshotSummary, generateTimeSpanSummary } from '$lib/utility/generate-summaries';
 import { getCurrentWeatherData, getSevenDayWeatherData } from '$lib/server/get-open-meteo-data';
 
 export async function GET({ url }) {

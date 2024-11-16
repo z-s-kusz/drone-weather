@@ -1,4 +1,4 @@
-import type { WeatherCardData } from './types';
+import type { WeatherCardData } from '../types';
 
 export function defaultWeatherCardData(title = '') {
     return {

@@ -64,6 +64,7 @@ export function removeLocation(deletedLocation: Location): Location[] {
     return getLocations();
 }
 
+// updateFavs false to avoid infinite update loops on setting a new fav
 export function updateLocation(location: Location, updateFavs = false) {
     localStorage.setItem(location.id, JSON.stringify(location));
     if (updateFavs && location.isFavorite) setFavoriteLocation(location);
@@ -84,10 +85,23 @@ export function setFavoriteLocation(favLocation: Location): Location[] {
 
 export function getMainLocation(): Location | null {
     const locations = getLocations();
-
     const favLocation = locations.find((location) => location.isFavorite);
 
     if (favLocation) return favLocation;
     else if (locations.length > 0) return locations[0];
     else return null;
+}
+
+export function initializeDefaultLocation(): Location {
+    console.log('initialize called');
+    const defaultLocation: Location = {
+        id: 'mn_default_location',
+        name: 'Minneapolis',
+        lat: '44.9550',
+        long: '-93.2658',
+        isFavorite: false,
+    };
+
+    addLocation(defaultLocation);
+    return defaultLocation;
 }

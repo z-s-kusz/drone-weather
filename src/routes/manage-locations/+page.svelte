@@ -1,6 +1,6 @@
 <script lang="ts">
     import { browser } from '$app/environment';
-	import { addLocation, getLocations, removeLocation, updateLocation } from '$lib/locations-storage';
+	import { addLocation, getLocations, removeLocation, updateLocation } from '$lib/utility/locations-storage';
 	import type { Location } from '$lib/types';
 
     const emptyLocation = { id: '', name: '', isFavorite: false, lat: '', long: '' };
@@ -10,7 +10,7 @@
 
     const onInputchange = (event: any, key: string) => {
         // @ts-ignore
-        editableLocation[key] = event.target.value;
+        editableLocation[key] = event.currentTarget.value;
     };
 
     const submitLocation = () => {
@@ -60,8 +60,8 @@
         <p>
             Sorry to make you enter these. I just don't want to add maps right now.
             And I didn't think you'd click "allow location access."
-            I'll add maps later. Probably... well, maybe. But hey, this gives a more accurate
-            location than "the center of my city!" ...Sorry.
+            Lat and long with 1-4 decimal places is fine.
+            <a href="https://xkcd.com/2170/" target="_blank">Click for info on coordinate precision.</a>
         </p>
         <label>
             Latitude
@@ -75,8 +75,9 @@
         </label>
         <label>
             Mark As Favorite
-            <input type="checkbox" autocomplete="off" name="longitude"
-                bind:checked={editableLocation.isFavorite} />
+            <input type="checkbox" name="favorite" bind:checked={editableLocation.isFavorite} />
+        </label>
+
         <button type="button" onclick={cancelEdit}>Cancel</button>
         {#if editableLocation.id}
             <button type="button" onclick={() => deleteLocation(editableLocation)}>Delete</button>
@@ -90,7 +91,7 @@
 <h2>Locations</h2>
 {#each locations as location }
     <div class="location">
-        <h4>{location.name} {location.isFavorite ? ' - [favorite ⭐]' : ''}</h4>
+        <h4>{location.name} {location.isFavorite ? ' [favorite ⭐]' : ''}</h4>
         <p>Coordinates: {location.lat}, {location.long}</p>
         <button type="button" onclick={() => editLocation(location)}>Edit</button>
     </div>
