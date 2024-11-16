@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { fade } from 'svelte/transition';
+    import { cubicOut } from 'svelte/easing';
 	import type { WeatherData } from '$lib/types';
 
     interface Props {
@@ -22,17 +24,20 @@
     </h2>
 
     {#if score}
-        <p>{score} / 5 Rating</p>
+        <p in:fade={{ duration: 800, easing: cubicOut }}>{score} / 5 Rating</p>
     {/if}
 
-    <p>{summary}</p>
+    {#if summary}
+        <pre in:fade={{ duration: 800, easing: cubicOut }}>{summary}</pre>
+    {:else}
+        <pre>loading...</pre>
+    {/if}
 
     {#if weather}
-        <div class="weather">
+        <div in:fade={{ duration: 800, easing: cubicOut }}>
             <span>Temp: {weather.temp} &deg;F. |</span>
             <span>Wind: {weather.wind10m}mph |</span>
             <span>Gusts: {weather.windGusts10m}mph |</span>
-            <span>Wind at 80 meters: {weather.wind80m}mph |</span>
             <span>Precipitation: {weather.precip}%</span>
         </div>
     {/if}
@@ -44,5 +49,9 @@
         border: 4px solid indigo;
         border-radius: var(--bd-radius);
         padding: 2rem;
+        box-shadow: 0px 0px 20px -8px rgb(238, 13, 140);
+    }
+    pre {
+        text-wrap: auto;
     }
 </style>

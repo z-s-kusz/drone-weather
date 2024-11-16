@@ -10,7 +10,6 @@ export type WeatherData = {
     temp: number;
     wind10m: number;
     windGusts10m: number;
-    wind80m?: number;
     precip: number;
 };
 

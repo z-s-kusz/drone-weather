@@ -8,9 +8,8 @@
 
     let location: Location | null = $state(null);
     let current: WeatherCardData = $state(defaultWeatherCardData('Current'));
-    let sevenDay: WeatherCardData = $state(defaultWeatherCardData('7 Day Forecast'));
+    let sevenDaySummary = $state('');
     let error = $state('');
-    let loading = $state(false);
 
     if (browser) {
         location = getMainLocation();
@@ -22,16 +21,13 @@
 
     async function getAllData() {
         if (!location) return;
-        loading = true;
 
         try {
             current = await getCurrentWeather(location);
-            await getSevenDaySummaryAI(location);
+            sevenDaySummary = await getSevenDaySummaryAI(location);
             error = '';
         } catch(error) {
             error = 'Error fetching data. Refresh to try again.';
-        } finally {
-            loading = false;
         }
     }
 </script>
@@ -40,14 +36,19 @@
     <p>{error}</p>
 {/if}
 
-{#if loading}
-    <p>loading...</p>
-{/if}
-
 {#if !location}
     <a href="/manage-locations">Add a location to get started!</a>
 {/if}
 
+<h2>{location?.name}</h2>
+
 <WeatherCard title="Current" summary={current.summary} weather={current.weather} score={current.score}/>
 
-<WeatherCard title="7 Day Forecast" summary={sevenDay.summary} />
+<WeatherCard title="7 Day AI Forecast" summary={sevenDaySummary} />
+
+<style>
+    h2 {
+        text-align: center;
+        border: none;
+    }
+</style>

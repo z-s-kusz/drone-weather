@@ -11,7 +11,6 @@ export function defaultWeatherCardData(title = '') {
             precip: 0,
             wind10m: 0,
             windGusts10m: 0,
-            wind80m: 0,
         },
     } as WeatherCardData;
 }

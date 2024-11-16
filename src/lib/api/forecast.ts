@@ -10,14 +10,12 @@ export async function getCurrentWeather(location: Location): Promise<WeatherCard
     }
 }
 
-export async function getSevenDaySummaryAI(location: Location): Promise<any> {
+export async function getSevenDaySummaryAI(location: Location): Promise<string> {
     try {
         const response = await fetch(`/ai-forecast?lat=${location.lat}&long=${location.long}`);
-        const summary = await response.json(); // type after testing
-        console.log(summary)
+        const summary: string = await response.json();
         return summary;
     } catch (error) {
-        console.error(error);
-        return '';
+        throw new Error('Error getting AI seven day summary reponse.');
     }
 }

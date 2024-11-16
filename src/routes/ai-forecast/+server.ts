@@ -33,7 +33,7 @@ async function getAIForecast(weather: any): Promise<string> {
                 { role: 'system', content: systemMessage },
                 {
                     role: 'user',
-                    content: `Weather JSON with night data removed: ${JSON.stringify(weather)}.`,
+                    content: `Weather JSON: ${JSON.stringify(weather)}.`,
                 },
             ],
             model: 'gpt-4o-mini',
@@ -54,31 +54,28 @@ const minTemp = 40;
 
 const systemMessage = `
 Prompt:
-You are a weather forecaster helping hobbyists schedule optimal times to fly tiny drones.
-These drones are highly sensitive to weather conditions.
+You're a weather forecaster helping hobbyists find optimal times to fly tiny drones.
+These drones are very sensitive to weather conditions.
 Your task is to identify the best days for flying within a seven-day forecast provided as hourly JSON data.
+Your response should help hobbyists decide the best days to fly, prioritizing ease of understanding.
 
-#Criteria:
-1. Wind:
+Criteria:
+* Wind:
    - Preferable wind speeds are below ${maxAllowedWindSpeed} mph.
    - Ideal wind speeds are below ${idealWindSpeedMax} mph.
    - Gusts should be below ${gustsMax} mph. The lower the better.
-2. Temperature:
+* Temp:
    - Hours with temperatures below ${minTemp}°F should be ignored.
-3. Rain:
+* Rain:
    - Exclude hours with a high chance of rain.
 
-#Output:
+Output:
 - Identify up to 3 days that best match the criteria.
 - Provide concise recommendations.
-- Do not mention tempurature, it is assumed any day you mention is warm enough.
+- Don't mention tempurature, it's assumed any day mentioned is warm enough.
+- Don't mention rain, it's assumed any day mentioned has a low/no chance of rain.
 
-#Examples of Good Responses:
-1. Positive Example:
-   - "Wednesday and Sunday look to be great flying days with light winds and below-average gusts."
-2. Moderate Example:
-   - "Thursday will be slightly windy but should still be fine for flying."
-3. No Suitable Days:
-   - "No ideal flying days are forecasted."
-
-Goal: Your response should help hobbyists decide the best days to fly, prioritizing ease of understanding.`;
+Example Responses:
+* "Wednesday and Sunday look to be great flying days with light winds and below-average gusts."
+* "Thursday will be slightly windy but should still be fine for flying."
+* "No ideal flying days are forecasted."`;
