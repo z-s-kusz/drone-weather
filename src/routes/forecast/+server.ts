@@ -44,18 +44,20 @@ async function getSevenDaySummary(lat: number, long: number): Promise<TimeSpanSu
 
 async function getCurrentSummary(lat: number, long: number): Promise<WeatherCardData> {
     const weatherData = await getCurrentWeatherData(lat, long);
-    const { summary, score } = generateSnapshotSummary(weatherData);
+    const weather = {
+        wind: weatherData.wind,
+        windGusts: weatherData.windGusts,
+        temp: weatherData.temperature,
+        precip: weatherData.precipitation,
+    };
+    console.log(weather)
+    const { summary, score } = generateSnapshotSummary(weather);
 
     return {
         title: 'Current',
         summary,
         score,
         link: '',
-        weather: {
-            wind10m: +weatherData.windSpeed10m.toFixed(2),
-            windGusts10m: +weatherData.windGusts10m.toFixed(2),
-            temp: +weatherData.temperature2m.toFixed(2),
-            precip: +weatherData.precipitation.toFixed(2),
-        }
+        weather,
     };
 }

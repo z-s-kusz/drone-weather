@@ -20,8 +20,7 @@ export async function GET({ url }): Promise<any> {
         const weather = await getSevenDayWeatherData(lat, long);
         const forecast = await getAIForecast(weather);
         return json(forecast);
-    } catch (error) {
-        // @ts-ignore no idea why i have to ignore this one
+    } catch (err) {
         return error(500, 'Error getting ai forecast.');
     }
 }

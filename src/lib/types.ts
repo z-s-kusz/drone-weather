@@ -8,8 +8,8 @@ export type Location = {
 
 export type WeatherData = {
     temp: number;
-    wind10m: number;
-    windGusts10m: number;
+    wind: number;
+    windGusts: number;
     precip: number;
 };
 

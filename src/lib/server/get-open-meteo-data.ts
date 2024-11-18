@@ -25,7 +25,7 @@ export async function getSevenDayWeatherData(lat: number, long: number): Promise
         ),
         temperature: roundArray(hourly.variables(0)!.valuesArray()!),
         precipitation: roundArray(hourly.variables(1)!.valuesArray()!),
-        windSpeed: roundArray(hourly.variables(2)!.valuesArray()!),
+        wind: roundArray(hourly.variables(2)!.valuesArray()!),
         windGusts: roundArray(hourly.variables(3)!.valuesArray()!),
         isDay: hourly.variables(4)!.valuesArray()!,
     };
@@ -38,7 +38,7 @@ export async function getCurrentWeatherData(lat: number, long: number): Promise<
     const params = {
         'latitude': lat,
         'longitude': long,
-        'current': ['temperature_2m', 'precipitation', 'wind_speed_10m', 'wind_direction_10m', 'wind_gusts_10m'],
+        'current': ['temperature_2m', 'precipitation', 'wind_speed_10m', 'wind_gusts_10m'],
         'temperature_unit': 'fahrenheit',
         'wind_speed_unit': 'mph',
         'precipitation_unit': 'inch',
@@ -50,17 +50,20 @@ export async function getCurrentWeatherData(lat: number, long: number): Promise<
 
     // Note: The order of weather variables in the URL query and the indices below need to match!
     return {
-		temperature2m: current.variables(0)!.value(),
-		precipitation: current.variables(1)!.value(),
-		windSpeed10m: current.variables(2)!.value(),
-		windDirection10m: current.variables(3)!.value(),
-		windGusts10m: current.variables(4)!.value(),
+		temperature: round(current.variables(0)!.value()),
+		precipitation: round(current.variables(1)!.value()),
+		wind: round(current.variables(2)!.value()),
+		windGusts: round(current.variables(3)!.value()),
     };
 }
 
 // Helper function to form time ranges
 const range = (start: number, stop: number, step: number) => {
     return Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
+};
+
+const round = (num: number) => {
+    return Math.round(num)
 };
 
 const roundArray = (data: Float32Array): number[] => {

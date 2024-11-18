@@ -6,7 +6,7 @@ export function generateSnapshotSummary(weather: any): { summary: string, score:
     let summary = '';
     let score = 0;
 
-    if (weather.temperature2m <= 40) {
+    if (weather.temperature <= 40) {
         summary = 'Too cold to fly tiny drones outside.';
         score = 0;
         return { summary, score };
@@ -16,34 +16,40 @@ export function generateSnapshotSummary(weather: any): { summary: string, score:
         score = 0;
         return { summary, score };
     }
-    if (weather.wind10m >= 20) {
+    if (weather.wind >= 20) {
         summary = 'Too windy to fly tiny drones outside.'
         score = 0;
         return { summary, score };
     }
 
-    if (weather.wind10m >= 14) {
-        summary += 'Quite breezy. ';
-        score += 1;
-    } else if (weather.wind10m >= 9) {
-        summary += 'Breezy. '
-        score += 2;
-    } else if (weather.wind10m >=4) {
-        score+= 3;
+    if (weather.wind <= 4) {
+        score = 4;
+        summary = 'Very light winds';
+    } else if (weather.wind <= 8) {
+        score = 3;
+        summary = 'Lighter winds'
+    } else if (weather.wind <= 12) {
+        score = 2;
+        summary += 'Windy';
+    } else if (weather.wind <= 16) {
+        score = 1;
+        summary += 'Ver windy but flyable';
     } else {
-        summary+= 'Very low wind. '
-        score += 4;
+        score = 0;
+        summary += 'Very windy'
     }
 
-    if (weather.wind_gusts_10m <= 14) {
-        summary += 'Mild gusts. ';
-    }else if (weather.windGusts10m <= 10) {
-        summary += 'Super light gusts. ';
-        score += 1;
+    if (weather.gusts <= 8) {
+        score++;
+        summary += ' with very light gusts';
+    } else if (weather.gusts <= 16) {
+        summary += 'with moderate gusts';
+    } else {
+        summary += ' with strong gusts.';
     }
 
     if (weather.precipitation >= 33) {
-        summary += 'Chance of precipitation. ';
+        summary += ' Chance of precipitation.';
     }
     return { summary, score };
 }
