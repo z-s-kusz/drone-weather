@@ -1,7 +1,6 @@
-import type { SnapshotSummary } from '$lib/types';
+import type { OpenMeteoGroupedData, OpenMeteoTimeSpanData } from '$lib/types';
+import { formatDateShort } from './dates';
 
-// let summary = 'Perfect weather for even the itty-bittiest little drone to fly outside!';
-// let score = 5;
 export function generateSnapshotSummary(weather: any): { summary: string, score: number} {
     let summary = '';
     let score = 0;
@@ -31,12 +30,9 @@ export function generateSnapshotSummary(weather: any): { summary: string, score:
     } else if (weather.wind <= 12) {
         score = 2;
         summary += 'Windy';
-    } else if (weather.wind <= 16) {
-        score = 1;
-        summary += 'Ver windy but flyable';
     } else {
         score = 0;
-        summary += 'Very windy'
+        summary += 'Very windy';
     }
 
     if (weather.gusts <= 8) {
@@ -54,6 +50,118 @@ export function generateSnapshotSummary(weather: any): { summary: string, score:
     return { summary, score };
 }
 
-export function generateTimeSpanSummary(weather: any): SnapshotSummary[] {
-    return [];    
+export function generateTimeSpanSummary(weather: OpenMeteoTimeSpanData): string {
+    weather = filterBadTimes(weather);
+    const weatherByDays = splitIntoDays(weather);
+
+    let fiveStarHours: string[] = [];
+    let fourStarHours: string[] = [];
+    let finalSummary = '';
+
+    weatherByDays.forEach((day) => {
+        day.weather.time.forEach((item, i) => {
+            const { summary, score } = generateSnapshotSummary({
+                precipitation: day.weather.precipitation[i],
+                tempurature: day.weather.temperature[i],
+                wind: day.weather.wind[i],
+                gusts: day.weather.windGusts[i],
+            });
+            if (score === 5) fiveStarHours.push(day.label);
+            if (score === 4) fourStarHours.push(day.label);
+        });
+    });
+
+    const fiveCount = fiveStarHours.length;
+    const fourCount = fourStarHours.length;
+
+    if (!fiveCount && !fourCount) {
+        return 'No especially good flying days forecasted.';
+    }
+
+    if (fiveCount) {
+        finalSummary += `${fiveCount} great flying time${pluralize(fiveCount)} forecasted on ${listDaysOut(fiveStarHours)}`;
+    }
+    // only list fourStarDays if there are not many five star.
+    if (fourCount && fiveCount < 3) {
+        finalSummary += `${fourCount} fair flying time${pluralize(fourCount)} forecasted on ${listDaysOut(fourStarHours)}`
+    }
+    return finalSummary;   
+}
+
+function filterBadTimes(weather: OpenMeteoTimeSpanData): OpenMeteoTimeSpanData {
+    for (let i = 0; i < weather.time.length; i++) {
+        let removeItem = false;
+
+        if (weather.precipitation[i] >= 20) removeItem = true;
+        if (weather.temperature[i] <= 40) removeItem = true;
+        if (weather.windGusts[i] >= 20) removeItem = true;
+        if (weather.wind[i] >= 15) removeItem = true;
+
+        if (removeItem) {
+            Object.keys(weather).forEach((key) => {
+                // @ts-ignore get yo shit together typescript
+                weather[key].splice(i, 1);
+            });
+        }
+    }
+
+    return weather;
+}
+
+function splitIntoDays(weather: OpenMeteoTimeSpanData): OpenMeteoGroupedData[] {
+    const days: OpenMeteoGroupedData[] = [];
+
+    weather.time.forEach((time, i) => {
+        const precipitation = weather.precipitation[i];
+        const temperature = weather.temperature[i];
+        const wind = weather.wind[i];
+        const windGusts = weather.windGusts[i];
+        const shortLabel = formatDateShort(new Date(time));
+        let parentDay = days.find((day) => day.label === shortLabel);
+
+        if (parentDay) {
+            parentDay.weather.precipitation.push(precipitation);
+            parentDay.weather.temperature.push(temperature);
+            parentDay.weather.wind.push(wind);
+            parentDay.weather.windGusts.push(windGusts);
+            parentDay.weather.time.push(time);
+        } else {
+            parentDay = {
+                label: shortLabel,
+                weather: {
+                    precipitation: [precipitation],
+                    temperature: [temperature],
+                    wind: [wind],
+                    windGusts: [windGusts],
+                    time: [time],
+                },
+            };
+            days.push(parentDay);
+        }
+    });
+
+    return days;
+}
+
+function pluralize(count: number): string {
+    return count === 1 ? '' : 's';
+}
+
+function listDaysOut(days: string[]): string {
+    const dedupedDays: string[] = [];
+    days.forEach((day) => {
+        if (!dedupedDays.includes(day)) dedupedDays.push(day);
+    });
+
+    if (dedupedDays.length === 1) {
+        return dedupedDays[0];
+    } else {
+        let message = 'the following days: \n';
+        dedupedDays.forEach((day, i) => {
+            // handle last day separatly
+            // if (i === dedupedDays.length - 1) return message += `${day} \n`;
+            message += `${day} \n`;
+        });
+        return message;
+    }
 }

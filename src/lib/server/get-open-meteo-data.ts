@@ -1,8 +1,9 @@
+import type { OpenMeteoTimeSpanData } from '$lib/types';
 import { fetchWeatherApi } from 'openmeteo';
 
 const url = 'https://api.open-meteo.com/v1/forecast';
 
-export async function getSevenDayWeatherData(lat: number, long: number): Promise<any> {
+export async function getSevenDayWeatherData(lat: number, long: number): Promise<OpenMeteoTimeSpanData> {
     const params = {
         'latitude': lat,
         'longitude': long,
@@ -72,7 +73,7 @@ const roundArray = (data: Float32Array): number[] => {
     return roundedNums;
 };
 
-const removeNightForecasts = (weather: any): any => {
+const removeNightForecasts = (weather: any): OpenMeteoTimeSpanData => {
     const isDayArray: (1 | 0)[] = weather.isDay;
 
     Object.keys(weather).forEach((key) => {

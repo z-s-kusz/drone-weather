@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import type { TimeSpanSumamryCard, WeatherCardData } from '$lib/types';
+import type { WeatherCardData } from '$lib/types';
 import { generateSnapshotSummary, generateTimeSpanSummary } from '$lib/utility/generate-summaries';
 import { getCurrentWeatherData, getSevenDayWeatherData } from '$lib/server/get-open-meteo-data';
 
@@ -22,24 +22,16 @@ export async function GET({ url }) {
         case 'today':
             return json('Feature coming soon');
         case 'sevenDay':
-            return json('Feature coming soon');
+            const sevenDayForecast = await getSevenDaySummary(lat, long);
+            return json(sevenDayForecast);
         default:
             return error(400, 'Forecast type not supported');
     }
 }
 
-async function getSevenDaySummary(lat: number, long: number): Promise<TimeSpanSumamryCard> {
-    const weather = getSevenDayWeatherData(lat, long);
-    const snapshots = generateTimeSpanSummary(weather)
-
-    const timeSpanSummary: TimeSpanSumamryCard = {
-        title: 'Current',
-        summary: '', // generate from snapshots data
-        link: '/daily/',
-        snapshots,
-    };
-
-    return timeSpanSummary;
+async function getSevenDaySummary(lat: number, long: number): Promise<string> {
+    const weather = await getSevenDayWeatherData(lat, long);
+    return generateTimeSpanSummary(weather)
 }
 
 async function getCurrentSummary(lat: number, long: number): Promise<WeatherCardData> {
@@ -50,7 +42,7 @@ async function getCurrentSummary(lat: number, long: number): Promise<WeatherCard
         temp: weatherData.temperature,
         precip: weatherData.precipitation,
     };
-    console.log(weather)
+
     const { summary, score } = generateSnapshotSummary(weather);
 
     return {

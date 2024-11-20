@@ -1,12 +1,22 @@
 import type { Location, WeatherCardData } from '$lib/types';
 
-export async function getCurrentWeather(location: Location): Promise<WeatherCardData> {
+type ForecastType = 'current' | 'sevenDay';
+
+// should split current/sevenday to have consistent returns but i dont care :)
+export async function getWeather(location: Location, type: ForecastType): Promise<WeatherCardData | string> {
     try {
-        const response = await fetch(`/forecast?type=current&lat=${location.lat}&long=${location.long}`);
-        const weather: WeatherCardData = await response.json();
+        let weather: WeatherCardData | string;
+        const response = await fetch(`/forecast?type=${type}&lat=${location.lat}&long=${location.long}`);
+        if (type === 'current') {
+            weather = await response.json() as WeatherCardData;
+        } else if (type === 'sevenDay') {
+            weather = await response.json() as string;
+        } else {
+            throw new Error('unsupported type ' + type);
+        }
         return weather;
     } catch (error) {
-        throw new Error('Error fetching current weather');
+        throw new Error('Error fetching weather');
     }
 }
 

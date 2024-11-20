@@ -21,15 +21,15 @@ export type WeatherCardData = {
     weather?: WeatherData;
 };
 
-export type SnapshotSummary = {
-    date: string;
-    score: number;
-    summary: string;
+export type OpenMeteoTimeSpanData = {
+    time: string[];
+    temperature: number[];
+    precipitation: number[];
+    wind: number[];
+    windGusts: number[];
 }
 
-export type TimeSpanSumamryCard = {
-    title: string;
-    link?: string;
-    summary: string;
-    snapshots: SnapshotSummary[];
+export type OpenMeteoGroupedData = {
+    label: string;
+    weather: OpenMeteoTimeSpanData;
 };

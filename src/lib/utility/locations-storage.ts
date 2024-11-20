@@ -93,7 +93,6 @@ export function getMainLocation(): Location | null {
 }
 
 export function initializeDefaultLocation(): Location {
-    console.log('initialize called');
     const defaultLocation: Location = {
         id: 'mn_default_location',
         name: 'Minneapolis',

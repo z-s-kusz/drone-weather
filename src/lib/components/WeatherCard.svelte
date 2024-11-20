@@ -9,9 +9,10 @@
         score?: number;
         weather?: WeatherData;
         link?: string;
+        isAI?: boolean
     }
 
-    let { title, summary, weather, link, score }: Props = $props();
+    let { title, summary, weather, link, score, isAI }: Props = $props();
 </script>
 
 <section class="card">
@@ -20,6 +21,7 @@
             <a href={link}>{title}</a>
         {:else}
             {title}
+            {#if isAI}<span class="knewave">now with AI!</span>{/if}
         {/if}
     </h2>
 
