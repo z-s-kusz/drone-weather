@@ -8,7 +8,7 @@ export async function getSevenDayWeatherData(lat: number, long: number): Promise
     const params = {
         'latitude': lat,
         'longitude': long,
-        'hourly': ['temperature_2m', 'precipitation', 'wind_speed_10m', 'wind_gusts_10m', 'is_day'],
+        'hourly': ['temperature_2m', 'precipitation_probability', 'wind_speed_10m', 'wind_gusts_10m', 'is_day'],
         'temperature_unit': 'fahrenheit',
         'wind_speed_unit': 'mph',
         'precipitation_unit': 'inch',
@@ -40,7 +40,7 @@ export async function getCurrentWeatherData(lat: number, long: number): Promise<
     const params = {
         'latitude': lat,
         'longitude': long,
-        'current': ['temperature_2m', 'precipitation', 'wind_speed_10m', 'wind_gusts_10m'],
+        'current': ['temperature_2m', 'precipitation_probability', 'wind_speed_10m', 'wind_gusts_10m'],
         'temperature_unit': 'fahrenheit',
         'wind_speed_unit': 'mph',
         'precipitation_unit': 'inch',
