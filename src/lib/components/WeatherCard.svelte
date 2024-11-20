@@ -21,7 +21,7 @@
             <a href={link}>{title}</a>
         {:else}
             {title}
-            {#if isAI}<span class="knewave">now with AI!</span>{/if}
+            {#if isAI}<div class="knewave">now with AI!</div>{/if}
         {/if}
     </h2>
 

@@ -88,7 +88,7 @@ export function generateTimeSpanSummary(weather: OpenMeteoTimeSpanData): string 
     return finalSummary;   
 }
 
-function filterBadTimes(weather: OpenMeteoTimeSpanData): OpenMeteoTimeSpanData {
+export function filterBadTimes(weather: OpenMeteoTimeSpanData): OpenMeteoTimeSpanData {
     for (let i = 0; i < weather.time.length; i++) {
         let removeItem = false;
 
@@ -108,7 +108,7 @@ function filterBadTimes(weather: OpenMeteoTimeSpanData): OpenMeteoTimeSpanData {
     return weather;
 }
 
-function splitIntoDays(weather: OpenMeteoTimeSpanData): OpenMeteoGroupedData[] {
+export function splitIntoDays(weather: OpenMeteoTimeSpanData): OpenMeteoGroupedData[] {
     const days: OpenMeteoGroupedData[] = [];
 
     weather.time.forEach((time, i) => {

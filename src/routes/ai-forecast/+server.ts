@@ -1,5 +1,6 @@
 import { OPENAI_API_KEY } from '$env/static/private';
 import { getSevenDayWeatherData } from '$lib/server/get-open-meteo-data.js';
+import { filterBadTimes, splitIntoDays } from '$lib/utility/generate-summaries';
 import { error, json } from '@sveltejs/kit';
 import OpenAI from 'openai';
 
@@ -18,7 +19,8 @@ export async function GET({ url }): Promise<any> {
 
     try {
         const weather = await getSevenDayWeatherData(lat, long);
-        const forecast = await getAIForecast(weather);
+        const filteredWeatherByDays = splitIntoDays(filterBadTimes(weather))
+        const forecast = await getAIForecast(filteredWeatherByDays);
         return json(forecast);
     } catch (err) {
         return error(500, 'Error getting ai forecast.');
@@ -49,32 +51,24 @@ async function getAIForecast(weather: any): Promise<string> {
 const maxAllowedWindSpeed = 12;
 const idealWindSpeedMax = 6;
 const gustsMax = 16;
-const minTemp = 40;
 
 const systemMessage = `
 Prompt:
 You're a weather forecaster helping hobbyists find optimal times to fly tiny drones.
 These drones are very sensitive to weather conditions.
-Your task is to identify the best days for flying within a seven-day forecast provided as hourly JSON data.
-Your response should help hobbyists decide the best days to fly, prioritizing ease of understanding.
+Your task is to identify one to three of the best days and times for flying within the forecast provided as hourly JSON data.
 
 Criteria:
-* Wind:
-   - Preferable wind speeds are below ${maxAllowedWindSpeed} mph.
-   - Ideal wind speeds are below ${idealWindSpeedMax} mph.
-   - Gusts should be below ${gustsMax} mph. The lower the better.
-* Temp:
-   - Hours with temperatures below ${minTemp}°F should be ignored.
-* Rain:
-   - Exclude hours with a high chance of rain.
+- Wind speeds must be below ${maxAllowedWindSpeed} mph. Ideal wind speeds are at or below ${idealWindSpeedMax} mph.
+- Gusts must be below ${gustsMax} mph. The lower the better.
 
 Output:
-- Identify up to 3 days that best match the criteria.
+- Identify 1 to 3 days and times that best match the criteria.
 - Provide concise recommendations.
+- List times in a 12-hour format.
 - Don't mention tempurature, it's assumed any day mentioned is warm enough.
 - Don't mention rain, it's assumed any day mentioned has a low/no chance of rain.
 
-Example Responses:
-* "Wednesday and Sunday look to be great flying days with light winds and below-average gusts."
-* "Thursday will be slightly windy but should still be fine for flying."
-* "No ideal flying days are forecasted."`;
+2 Example Responses:
+- "Wednesday at 1:00 and Sunday at 4:00 look to be great flying times with light winds and below-average gusts."
+- "No ideal flying days are forecasted."`;
