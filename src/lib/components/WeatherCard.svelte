@@ -40,7 +40,7 @@
             <span>Temp: {weather.temperature} &deg;F. |</span>
             <span>Wind: {weather.wind}mph |</span>
             <span>Gusts: {weather.gusts}mph |</span>
-            <span>Precipitation: {weather.precip}%</span>
+            <span>Precipitation: {weather.precipitation}%</span>
         </div>
     {/if}
 </section>

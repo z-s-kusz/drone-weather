@@ -10,7 +10,7 @@ export type WeatherData = {
     temperature: number;
     wind: number;
     gusts: number;
-    precip: number;
+    precipitation: number;
 };
 
 export type WeatherCardData = {

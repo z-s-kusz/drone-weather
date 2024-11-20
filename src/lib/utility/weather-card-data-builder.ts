@@ -8,7 +8,7 @@ export function defaultWeatherCardData(title = '') {
         link: '',
         weather: {
             temperature: 0,
-            precip: 0,
+            precipitation: 0,
             wind: 0,
             gusts: 0,
         },

@@ -64,9 +64,9 @@ Criteria:
 
 Output:
 - Identify 1 to 3 days and times that best match the criteria.
-- Provide concise recommendations.
+- Provide concise recommendations, formatted as a message (no markdown).
 - List times in a 12-hour format.
-- Don't mention tempurature, it's assumed any day mentioned is warm enough.
+- Don't mention temperature, it's assumed any day mentioned is warm enough.
 - Don't mention rain, it's assumed any day mentioned has a low/no chance of rain.
 
 2 Example Responses:

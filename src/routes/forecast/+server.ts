@@ -40,7 +40,7 @@ async function getCurrentSummary(lat: number, long: number): Promise<WeatherCard
         wind: weatherData.wind,
         gusts: weatherData.gusts,
         temperature: weatherData.temperature,
-        precip: weatherData.precipitation,
+        precipitation: weatherData.precipitation,
     };
 
     const { summary, score } = generateSnapshotSummary(weather);
