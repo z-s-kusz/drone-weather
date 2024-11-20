@@ -1,4 +1,5 @@
 import type { OpenMeteoTimeSpanData } from '$lib/types';
+import { isFutureTime } from '$lib/utility/dates';
 import { fetchWeatherApi } from 'openmeteo';
 
 const url = 'https://api.open-meteo.com/v1/forecast';
@@ -31,7 +32,7 @@ export async function getSevenDayWeatherData(lat: number, long: number): Promise
         isDay: hourly.variables(4)!.valuesArray()!,
     };
 
-    const dayTimeWeather = removeNightForecasts(weather);
+    const dayTimeWeather = removeNightAndPastForecasts(weather);
     return dayTimeWeather;
 }
 
@@ -73,14 +74,17 @@ const roundArray = (data: Float32Array): number[] => {
     return roundedNums;
 };
 
-const removeNightForecasts = (weather: any): OpenMeteoTimeSpanData => {
-    const isDayArray: (1 | 0)[] = weather.isDay;
+const removeNightAndPastForecasts = (weather: any): OpenMeteoTimeSpanData => {
+    const isDayArray: (1 | 0)[] = [...weather.isDay];
+    const times = weather.time;
+    const now = new Date();
 
     Object.keys(weather).forEach((key) => {
         if (key === 'isDay') return;
 
         weather[key] = weather[key].filter((_data: any, i: number) => {
-            return isDayArray[i] === 1;
+            const time = new Date(times[i]);
+            return isDayArray[i] === 1 && isFutureTime(now, time);
         });
     });
     delete weather.isDay;

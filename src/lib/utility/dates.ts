@@ -16,3 +16,7 @@ export function formatMMDDYYY(date: string): string {
     const formattedDate = mm + '/' + dd + '/' + yyyy;
     return formattedDate;
 }
+
+export function isFutureTime(now: Date, time: Date): boolean {
+    return now < time;
+}
