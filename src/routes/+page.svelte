@@ -56,8 +56,4 @@
         padding: 2rem;
         font-size: 24px;
     }
-
-    h2 {
-        border: none;
-    }
 </style>

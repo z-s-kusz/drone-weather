@@ -86,19 +86,27 @@
     </form>
 </dialog>
 
-<button type="button" onclick={() => dialogRef.showModal()}>Add New Location</button>
+<div class="flex">
+    <h2>Locations</h2>
+    <button type="button" onclick={() => dialogRef.showModal()}>Add New Location</button>
 
-<h2>Locations</h2>
-{#each locations as location }
-    <div class="location">
-        <h4>{location.name} {location.isFavorite ? ' [favorite ⭐]' : ''}</h4>
-        <p>Coordinates: {location.lat}, {location.long}</p>
-        <button type="button" onclick={() => editLocation(location)}>Edit</button>
-    </div>
-{/each}
-
+    {#each locations as location }
+        <div class="location">
+            <h4>{location.name} {location.isFavorite ? ' [favorite ⭐]' : ''}</h4>
+            <p>Coordinates: {location.lat}, {location.long}</p>
+            <button type="button" onclick={() => editLocation(location)}>Edit</button>
+        </div>
+    {/each}
+</div>
 <style>
+    .flex {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
     .location {
+        width: min(700px, 100%); 
         border: 2px solid indigo;
         border-radius: var(--bd-radius); /* from matcha css */
         padding: 2rem;
