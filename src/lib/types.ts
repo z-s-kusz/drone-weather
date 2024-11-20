@@ -9,7 +9,7 @@ export type Location = {
 export type WeatherData = {
     temp: number;
     wind: number;
-    windGusts: number;
+    gusts: number;
     precip: number;
 };
 
@@ -26,7 +26,7 @@ export type OpenMeteoTimeSpanData = {
     temperature: number[];
     precipitation: number[];
     wind: number[];
-    windGusts: number[];
+    gusts: number[];
 }
 
 export type OpenMeteoGroupedData = {

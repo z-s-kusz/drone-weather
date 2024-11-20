@@ -37,9 +37,9 @@ export function generateSnapshotSummary(weather: any): { summary: string, score:
 
     if (weather.gusts <= 8) {
         score++;
-        summary += ' with very light gusts';
+        summary += ' with very light gusts.';
     } else if (weather.gusts <= 16) {
-        summary += 'with moderate gusts';
+        summary += 'with moderate gusts.';
     } else {
         summary += ' with strong gusts.';
     }
@@ -64,7 +64,7 @@ export function generateTimeSpanSummary(weather: OpenMeteoTimeSpanData): string 
                 precipitation: day.weather.precipitation[i],
                 tempurature: day.weather.temperature[i],
                 wind: day.weather.wind[i],
-                gusts: day.weather.windGusts[i],
+                gusts: day.weather.gusts[i],
             });
             if (score === 5) fiveStarHours.push(day.label);
             if (score === 4) fourStarHours.push(day.label);
@@ -94,7 +94,7 @@ export function filterBadTimes(weather: OpenMeteoTimeSpanData): OpenMeteoTimeSpa
 
         if (weather.precipitation[i] >= 20) removeItem = true;
         if (weather.temperature[i] <= 40) removeItem = true;
-        if (weather.windGusts[i] >= 20) removeItem = true;
+        if (weather.gusts[i] >= 20) removeItem = true;
         if (weather.wind[i] >= 15) removeItem = true;
 
         if (removeItem) {
@@ -115,7 +115,7 @@ export function splitIntoDays(weather: OpenMeteoTimeSpanData): OpenMeteoGroupedD
         const precipitation = weather.precipitation[i];
         const temperature = weather.temperature[i];
         const wind = weather.wind[i];
-        const windGusts = weather.windGusts[i];
+        const gusts = weather.gusts[i];
         const shortLabel = formatDateShort(new Date(time));
         let parentDay = days.find((day) => day.label === shortLabel);
 
@@ -123,7 +123,7 @@ export function splitIntoDays(weather: OpenMeteoTimeSpanData): OpenMeteoGroupedD
             parentDay.weather.precipitation.push(precipitation);
             parentDay.weather.temperature.push(temperature);
             parentDay.weather.wind.push(wind);
-            parentDay.weather.windGusts.push(windGusts);
+            parentDay.weather.gusts.push(gusts);
             parentDay.weather.time.push(time);
         } else {
             parentDay = {
@@ -132,7 +132,7 @@ export function splitIntoDays(weather: OpenMeteoTimeSpanData): OpenMeteoGroupedD
                     precipitation: [precipitation],
                     temperature: [temperature],
                     wind: [wind],
-                    windGusts: [windGusts],
+                    gusts: [gusts],
                     time: [time],
                 },
             };

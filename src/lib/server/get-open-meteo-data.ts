@@ -27,7 +27,7 @@ export async function getSevenDayWeatherData(lat: number, long: number): Promise
         temperature: roundArray(hourly.variables(0)!.valuesArray()!),
         precipitation: roundArray(hourly.variables(1)!.valuesArray()!),
         wind: roundArray(hourly.variables(2)!.valuesArray()!),
-        windGusts: roundArray(hourly.variables(3)!.valuesArray()!),
+        gusts: roundArray(hourly.variables(3)!.valuesArray()!),
         isDay: hourly.variables(4)!.valuesArray()!,
     };
 
@@ -54,7 +54,7 @@ export async function getCurrentWeatherData(lat: number, long: number): Promise<
 		temperature: round(current.variables(0)!.value()),
 		precipitation: round(current.variables(1)!.value()),
 		wind: round(current.variables(2)!.value()),
-		windGusts: round(current.variables(3)!.value()),
+		gusts: round(current.variables(3)!.value()),
     };
 }
 
