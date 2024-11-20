@@ -37,7 +37,7 @@
 
     {#if weather}
         <div in:fade={{ duration: 800, easing: cubicOut }}>
-            <span>Temp: {weather.temp} &deg;F. |</span>
+            <span>Temp: {weather.temperature} &deg;F. |</span>
             <span>Wind: {weather.wind}mph |</span>
             <span>Gusts: {weather.gusts}mph |</span>
             <span>Precipitation: {weather.precip}%</span>

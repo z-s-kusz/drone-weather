@@ -39,7 +39,7 @@ async function getCurrentSummary(lat: number, long: number): Promise<WeatherCard
     const weather = {
         wind: weatherData.wind,
         gusts: weatherData.gusts,
-        temp: weatherData.temperature,
+        temperature: weatherData.temperature,
         precip: weatherData.precipitation,
     };
 

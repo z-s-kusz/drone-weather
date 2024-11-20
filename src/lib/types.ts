@@ -7,7 +7,7 @@ export type Location = {
 }
 
 export type WeatherData = {
-    temp: number;
+    temperature: number;
     wind: number;
     gusts: number;
     precip: number;

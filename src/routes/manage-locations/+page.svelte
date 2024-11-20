@@ -111,5 +111,6 @@
         border-radius: var(--bd-radius); /* from matcha css */
         padding: 2rem;
         margin: 1rem 0;
+        box-sizing: border-box;
     }
 </style>
