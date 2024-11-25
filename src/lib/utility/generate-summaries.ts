@@ -1,5 +1,6 @@
 import type { OpenMeteoGroupedData, OpenMeteoTimeSpanData } from '$lib/types';
 import { formatDateShort } from './dates';
+import { bestWindSpeedMax, okGustsMax, okWindSpeedMax, worstAlllowedWindSpeedMax, worstAllowedGustsMax } from './ideal-weather-settings';
 
 export function generateSnapshotSummary(weather: any): { summary: string, score: number} {
     let summary = '';
@@ -21,13 +22,13 @@ export function generateSnapshotSummary(weather: any): { summary: string, score:
         return { summary, score };
     }
 
-    if (weather.wind <= 4) {
+    if (weather.wind <= bestWindSpeedMax) {
         score = 4;
         summary = 'Very light winds';
-    } else if (weather.wind <= 8) {
+    } else if (weather.wind <= okWindSpeedMax) {
         score = 3;
         summary = 'Lighter winds'
-    } else if (weather.wind <= 12) {
+    } else if (weather.wind <= worstAlllowedWindSpeedMax) {
         score = 2;
         summary += 'Windy';
     } else {
@@ -35,10 +36,10 @@ export function generateSnapshotSummary(weather: any): { summary: string, score:
         summary += 'Very windy';
     }
 
-    if (weather.gusts <= 8) {
+    if (weather.gusts <= okGustsMax) {
         score++;
         summary += ' with very light gusts.';
-    } else if (weather.gusts <= 16) {
+    } else if (weather.gusts <= worstAllowedGustsMax) {
         summary += 'with moderate gusts.';
     } else {
         summary += ' with strong gusts.';
@@ -93,9 +94,9 @@ export function filterBadTimes(weather: OpenMeteoTimeSpanData): OpenMeteoTimeSpa
         let removeItem = false;
 
         if (weather.precipitation[i] >= 20) removeItem = true;
-        if (weather.temperature[i] <= 40) removeItem = true;
-        if (weather.gusts[i] >= 20) removeItem = true;
-        if (weather.wind[i] >= 15) removeItem = true;
+        if (weather.temperature[i] <= 44) removeItem = true;
+        if (weather.gusts[i] > worstAllowedGustsMax) removeItem = true;
+        if (weather.wind[i] > worstAlllowedWindSpeedMax) removeItem = true;
 
         if (removeItem) {
             Object.keys(weather).forEach((key) => {
@@ -154,7 +155,7 @@ function listDaysOut(days: string[]): string {
     });
 
     if (dedupedDays.length === 1) {
-        return dedupedDays[0];
+        return `${dedupedDays[0]}.\n`;
     } else {
         let message = 'the following days: \n';
         dedupedDays.forEach((day, i) => {

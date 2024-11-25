@@ -1,6 +1,7 @@
 import { OPENAI_API_KEY } from '$env/static/private';
 import { getSevenDayWeatherData } from '$lib/server/get-open-meteo-data.js';
 import { filterBadTimes, splitIntoDays } from '$lib/utility/generate-summaries';
+import { bestWindSpeedMax, worstAlllowedWindSpeedMax, worstAllowedGustsMax } from '$lib/utility/ideal-weather-settings.js';
 import { error, json } from '@sveltejs/kit';
 import OpenAI from 'openai';
 
@@ -48,10 +49,6 @@ async function getAIForecast(weather: any): Promise<string> {
     }
 }
 
-const maxAllowedWindSpeed = 12;
-const idealWindSpeedMax = 6;
-const gustsMax = 16;
-
 const systemMessage = `
 Prompt:
 You're a weather forecaster helping hobbyists find optimal times to fly tiny drones.
@@ -59,8 +56,8 @@ These drones are very sensitive to weather conditions.
 Your task is to identify one to three of the best days and times for flying within the forecast provided as hourly JSON data.
 
 Criteria:
-- Wind speeds must be below ${maxAllowedWindSpeed} mph. Ideal wind speeds are at or below ${idealWindSpeedMax} mph.
-- Gusts must be below ${gustsMax} mph. The lower the better.
+- Wind speeds must be below ${worstAlllowedWindSpeedMax} mph. Ideal wind speeds are at or below ${bestWindSpeedMax} mph.
+- Gusts must be below ${worstAllowedGustsMax} mph. The lower the better.
 
 Output:
 - Identify 1 to 3 days and times that best match the criteria.
