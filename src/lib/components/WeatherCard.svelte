@@ -15,7 +15,7 @@
     let { title, summary, weather, link, score, isAI }: Props = $props();
 </script>
 
-<section class="card">
+<section class="card" in:fade={{ duration: 800, easing: cubicOut }}>
     <h2>
         {#if link}
             <a href={link}>{title}</a>
