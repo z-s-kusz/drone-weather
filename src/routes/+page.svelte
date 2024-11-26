@@ -27,14 +27,18 @@
     async function getAllData() {
         if (!location) return;
 
-        try {
-            current = await getWeather(location, 'current') as WeatherCardData;
-            sevenDaySummary = await getWeather(location, 'sevenDay') as string;
-            sevenDayAISummary = await getSevenDaySummaryAI(location);
+        Promise.all([
+            getWeather(location, 'current'),
+            getWeather(location, 'sevenDay'),
+            getSevenDaySummaryAI(location),
+        ]).then((values) => {
+            current = values[0] as WeatherCardData;
+            sevenDaySummary = values[1] as string;
+            sevenDayAISummary = values[2];
             error = '';
-        } catch(error) {
-            error = 'Error fetching data. Refresh to try again.';
-        }
+        }).catch((err) => {
+            error = err.message ? err.message : 'Unknown error getting data.';
+        });
     }
 
     function setLocation(locationId: string) {

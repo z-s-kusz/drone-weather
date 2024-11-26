@@ -7,6 +7,11 @@ export async function getWeather(location: Location, type: ForecastType): Promis
     try {
         let weather: WeatherCardData | string;
         const response = await fetch(`/forecast?type=${type}&lat=${location.lat}&long=${location.long}`);
+
+        if (response.status === 500) {
+            throw new Error('Api error fetching weather. Status ' + response.status);
+        }
+
         if (type === 'current') {
             weather = await response.json() as WeatherCardData;
         } else if (type === 'sevenDay') {
@@ -15,8 +20,8 @@ export async function getWeather(location: Location, type: ForecastType): Promis
             throw new Error('unsupported type ' + type);
         }
         return weather;
-    } catch (error) {
-        throw new Error('Error fetching weather');
+    } catch (err: any) {
+        throw new Error(err?.message || 'Error getting weather data.');
     }
 }
 

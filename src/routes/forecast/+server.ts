@@ -15,18 +15,23 @@ export async function GET({ url }) {
         return error(400, 'Requered query param "type" not specified.');
     }
 
-    switch(forecastType) {
-        case 'current':
-            const forecast = await getCurrentSummary(lat, long);
-            return json(forecast);
-        case 'today':
-            return json('Feature coming soon');
-        case 'sevenDay':
-            const sevenDayForecast = await getSevenDaySummary(lat, long);
-            return json(sevenDayForecast);
-        default:
-            return error(400, 'Forecast type not supported');
+    try {
+        switch(forecastType) {
+            case 'current':
+                const forecast = await getCurrentSummary(lat, long);
+                return json(forecast);
+            case 'today':
+                return json('Feature coming soon');
+            case 'sevenDay':
+                const sevenDayForecast = await getSevenDaySummary(lat, long);
+                return json(sevenDayForecast);
+            default:
+                return error(400, 'Forecast type not supported');
+        }
+    } catch (err) {
+        return error(500, 'Error getting forecast.');
     }
+
 }
 
 async function getSevenDaySummary(lat: number, long: number): Promise<string> {
