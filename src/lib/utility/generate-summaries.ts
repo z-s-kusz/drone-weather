@@ -90,23 +90,31 @@ export function generateTimeSpanSummary(weather: OpenMeteoTimeSpanData): string 
 }
 
 export function filterBadTimes(weather: OpenMeteoTimeSpanData): OpenMeteoTimeSpanData {
+    let filteredWeather: OpenMeteoTimeSpanData = {
+        time: [],
+        temperature: [],
+        wind: [],
+        gusts: [],
+        precipitation: [],
+    };
+
     for (let i = 0; i < weather.time.length; i++) {
         let removeItem = false;
 
         if (weather.precipitation[i] >= 20) removeItem = true;
-        if (weather.temperature[i] <= 44) removeItem = true;
+        if (weather.temperature[i] < 40) removeItem = true;
         if (weather.gusts[i] > worstAllowedGustsMax) removeItem = true;
         if (weather.wind[i] > worstAlllowedWindSpeedMax) removeItem = true;
 
-        if (removeItem) {
+        if (!removeItem) {
             Object.keys(weather).forEach((key) => {
                 // @ts-ignore get yo shit together typescript
-                weather[key].splice(i, 1);
+                filteredWeather[key].push(weather[key]);
             });
         }
     }
 
-    return weather;
+    return filteredWeather;
 }
 
 export function splitIntoDays(weather: OpenMeteoTimeSpanData): OpenMeteoGroupedData[] {

@@ -65,6 +65,7 @@ Output:
 - List times in a 12-hour format.
 - Don't mention temperature, it's assumed any day mentioned is warm enough.
 - Don't mention rain, it's assumed any day mentioned has a low/no chance of rain.
+- If JSON data is empty, respond "No ideal flying days are forecasted."
 
 2 Example Responses:
 - "Wednesday at 1:00 and Sunday at 4:00 look to be great flying times with light winds and below-average gusts."
