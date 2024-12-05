@@ -14,6 +14,7 @@
     let sevenDaySummary = $state('');
     let sevenDayAISummary = $state('');
     let error = $state('');
+    let loading = $state(false);
 
     if (browser) {
         location = getMainLocation() || initializeDefaultLocation();
@@ -27,6 +28,8 @@
     async function getAllData() {
         if (!location) return;
 
+        loading = true;
+
         Promise.all([
             getWeather(location, 'current'),
             getWeather(location, 'sevenDay'),
@@ -38,6 +41,8 @@
             error = '';
         }).catch((err) => {
             error = err.message ? err.message : 'Unknown error getting data.';
+        }).finally(() => {
+            loading = false;
         });
     }
 
@@ -61,11 +66,11 @@
     </div>
 {/if}
 
-<WeatherCard title="Current" summary={current.summary} weather={current.weather} score={current.score}/>
+<WeatherCard title="Current" summary={current.summary} weather={current.weather} score={current.score} {loading} />
 
-<WeatherCard title="7 Day Forecast" summary={sevenDaySummary} />
+<WeatherCard title="7 Day Forecast" summary={sevenDaySummary} {loading} />
 
-<WeatherCard title="7 Day Forecast" isAI={true} summary={sevenDayAISummary} />
+<WeatherCard title="7 Day Forecast" isAI={true} summary={sevenDayAISummary} {loading} />
 
 <style>
     .error {

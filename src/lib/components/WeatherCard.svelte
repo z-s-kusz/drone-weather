@@ -9,10 +9,11 @@
         score?: number;
         weather?: WeatherData;
         link?: string;
-        isAI?: boolean
+        isAI?: boolean;
+        loading: boolean;
     }
 
-    let { title, summary, weather, link, score, isAI }: Props = $props();
+    let { title, summary, weather, link, score, isAI, loading }: Props = $props();
 </script>
 
 <section class="card" in:fade={{ duration: 800, easing: cubicOut }}>
@@ -29,10 +30,10 @@
         <p in:fade={{ duration: 800, easing: cubicOut }}>{score} / 5 Rating</p>
     {/if}
 
-    {#if summary}
-        <pre in:fade={{ duration: 800, easing: cubicOut }}>{summary}</pre>
-    {:else}
+    {#if loading}
         <pre>loading...</pre>
+    {:else if summary}
+        <pre in:fade={{ duration: 800, easing: cubicOut }}>{summary}</pre>
     {/if}
 
     {#if weather}
