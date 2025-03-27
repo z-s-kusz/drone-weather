@@ -40,7 +40,7 @@ export function generateSnapshotSummary(weather: any): { summary: string, score:
         score++;
         summary += ' with very light gusts.';
     } else if (weather.gusts <= worstAllowedGustsMax) {
-        summary += 'with moderate gusts.';
+        summary += ' with moderate gusts.';
     } else {
         summary += ' with strong gusts.';
     }
