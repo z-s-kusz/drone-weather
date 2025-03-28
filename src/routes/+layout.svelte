@@ -10,6 +10,7 @@
     <nav>
         <a href="/">Home</a>
         <a href="manage-locations">Manage Locations</a>
+        <a href="/about">About</a>
     </nav>
 </header>
 
