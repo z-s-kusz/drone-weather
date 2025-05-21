@@ -28,7 +28,8 @@ export async function getWeather(location: Location, type: ForecastType): Promis
 export async function getSevenDaySummaryAI(location: Location): Promise<string> {
     try {
         const response = await fetch(`/ai-forecast?lat=${location.lat}&long=${location.long}`);
-        const summary: string = await response.json();
+        let summary: any = await response.json();
+        if (summary.message) summary = summary.message;
         return summary;
     } catch (error) {
         throw new Error('Error getting AI seven day summary reponse.');
