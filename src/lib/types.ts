@@ -23,8 +23,8 @@ export type WeatherCardData = {
 
 export type OpenMeteoTimeSpanData = {
     time: string[];
-    temperature: number[];
-    precipitation: number[];
+    temperature?: number[];
+    precipitation?: number[];
     wind: number[];
     gusts: number[];
 }

@@ -1,6 +1,6 @@
 import { OPENAI_API_KEY } from '$env/static/private';
 import { getSevenDayWeatherData } from '$lib/server/get-open-meteo-data.js';
-import { filterBadTimes, splitIntoDays } from '$lib/utility/generate-summaries';
+import { filterBadWeather, splitIntoDays } from '$lib/utility/generate-summaries';
 import { bestWindSpeedMax, worstAlllowedWindSpeedMax, worstAllowedGustsMax } from '$lib/utility/ideal-weather-settings.js';
 import { error, json } from '@sveltejs/kit';
 import OpenAI from 'openai';
@@ -20,10 +20,11 @@ export async function GET({ url }): Promise<any> {
 
     try {
         const weather = await getSevenDayWeatherData(lat, long);
-        const filteredWeatherByDays = splitIntoDays(filterBadTimes(weather))
+        const filteredWeatherByDays = splitIntoDays(filterBadWeather(weather));
         const forecast = await getAIForecast(filteredWeatherByDays);
         return json(forecast);
     } catch (err) {
+        console.error(err);
         return error(500, 'Error getting ai forecast.');
     }
 }

@@ -52,7 +52,7 @@ export function generateSnapshotSummary(weather: any): { summary: string, score:
 }
 
 export function generateTimeSpanSummary(weather: OpenMeteoTimeSpanData): string {
-    weather = filterBadTimes(weather);
+    weather = filterBadWeather(weather);
     const weatherByDays = splitIntoDays(weather);
 
     let fiveStarHours: string[] = [];
@@ -61,9 +61,7 @@ export function generateTimeSpanSummary(weather: OpenMeteoTimeSpanData): string 
 
     weatherByDays.forEach((day) => {
         day.weather.time.forEach((item, i) => {
-            const { summary, score } = generateSnapshotSummary({
-                precipitation: day.weather.precipitation[i],
-                tempurature: day.weather.temperature[i],
+            const { score } = generateSnapshotSummary({
                 wind: day.weather.wind[i],
                 gusts: day.weather.gusts[i],
             });
@@ -89,7 +87,7 @@ export function generateTimeSpanSummary(weather: OpenMeteoTimeSpanData): string 
     return finalSummary;   
 }
 
-export function filterBadTimes(weather: OpenMeteoTimeSpanData): OpenMeteoTimeSpanData {
+export function filterBadWeather(weather: OpenMeteoTimeSpanData): OpenMeteoTimeSpanData {
     let filteredWeather: OpenMeteoTimeSpanData = {
         time: [],
         temperature: [],
@@ -101,19 +99,21 @@ export function filterBadTimes(weather: OpenMeteoTimeSpanData): OpenMeteoTimeSpa
     for (let i = 0; i < weather.time.length; i++) {
         let removeItem = false;
 
-        if (weather.precipitation[i] >= 20) removeItem = true;
-        if (weather.temperature[i] < 40) removeItem = true;
+        if (weather.precipitation![i] >= 20) removeItem = true;
+        if (weather!.temperature![i] < 40) removeItem = true;
         if (weather.gusts[i] > worstAllowedGustsMax) removeItem = true;
         if (weather.wind[i] > worstAlllowedWindSpeedMax) removeItem = true;
 
         if (!removeItem) {
             Object.keys(weather).forEach((key) => {
                 // @ts-ignore get yo shit together typescript
-                filteredWeather[key].push(weather[key]);
+                filteredWeather[key].push(weather[key][i]);
             });
         }
     }
 
+    delete filteredWeather.temperature;
+    delete filteredWeather.precipitation;
     return filteredWeather;
 }
 
@@ -121,16 +121,12 @@ export function splitIntoDays(weather: OpenMeteoTimeSpanData): OpenMeteoGroupedD
     const days: OpenMeteoGroupedData[] = [];
 
     weather.time.forEach((time, i) => {
-        const precipitation = weather.precipitation[i];
-        const temperature = weather.temperature[i];
         const wind = weather.wind[i];
         const gusts = weather.gusts[i];
         const shortLabel = formatDateShort(new Date(time));
         let parentDay = days.find((day) => day.label === shortLabel);
 
         if (parentDay) {
-            parentDay.weather.precipitation.push(precipitation);
-            parentDay.weather.temperature.push(temperature);
             parentDay.weather.wind.push(wind);
             parentDay.weather.gusts.push(gusts);
             parentDay.weather.time.push(time);
@@ -138,8 +134,6 @@ export function splitIntoDays(weather: OpenMeteoTimeSpanData): OpenMeteoGroupedD
             parentDay = {
                 label: shortLabel,
                 weather: {
-                    precipitation: [precipitation],
-                    temperature: [temperature],
                     wind: [wind],
                     gusts: [gusts],
                     time: [time],
