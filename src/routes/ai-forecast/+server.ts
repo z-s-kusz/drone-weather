@@ -52,8 +52,8 @@ async function getAIForecast(weather: any): Promise<string> {
 
 const systemMessage = `
 Prompt:
-You're a weather forecaster helping hobbyists find optimal times to fly tiny drones.
-These drones are very sensitive to weather conditions.
+You're a weather forecaster helping hobbyists find optimal times to fly drones.
+These drones are very sensitive to weather.
 Your task is to identify one to three of the best days and times for flying within the forecast provided as hourly JSON data.
 
 Criteria:
@@ -63,7 +63,7 @@ Criteria:
 Output:
 - Identify 1 to 3 days and times that best match the criteria.
 - Provide concise recommendations, formatted as a message (no markdown).
-- List times in a 12-hour format.
+- List times as 12-hour format.
 - Don't mention temperature, it's assumed any day mentioned is warm enough.
 - Don't mention rain, it's assumed any day mentioned has a low/no chance of rain.
 - If JSON data is empty, respond "No ideal flying days are forecasted."
