@@ -13,7 +13,7 @@
         loading: boolean;
     }
 
-    let { title, summary, weather, link, score, isAI, loading }: Props = $props();
+    let { title, summary, weather, link, score = 0, isAI, loading }: Props = $props();
 </script>
 
 <section class="card" in:fade={{ duration: 800, easing: cubicOut }}>
@@ -26,7 +26,7 @@
         {/if}
     </h2>
 
-    {#if score}
+    {#if !loading && score > -1}
         <p in:fade={{ duration: 800, easing: cubicOut }}>{score} / 5 Rating</p>
     {/if}
 
