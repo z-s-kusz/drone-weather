@@ -14,7 +14,7 @@
     let sevenDaySummary = $state('');
     let sevenDayAISummary = $state('');
     let error = $state('');
-    let loading = $state(false);
+    let loading = $state(true);
 
     if (browser) {
         location = getMainLocation() || initializeDefaultLocation();
@@ -66,7 +66,7 @@
     </div>
 {/if}
 
-<WeatherCard title="Current" summary={current.summary} weather={current.weather} score={current.score} {loading} />
+<WeatherCard title="Current" summary={current.summary} weather={current.weather} showScore={true} score={current.score} {loading} />
 
 <WeatherCard title="7 Day Forecast" summary={sevenDaySummary} {loading} />
 

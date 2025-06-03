@@ -4,16 +4,17 @@
 	import type { WeatherData } from '$lib/types';
 
     interface Props {
+        loading: boolean;
         title: string;
         summary: string;
+        showScore?: boolean;
         score?: number;
         weather?: WeatherData;
         link?: string;
         isAI?: boolean;
-        loading: boolean;
     }
 
-    let { title, summary, weather, link, score = 0, isAI, loading }: Props = $props();
+    let { title, summary, weather, link, showScore = false, score = 0, isAI, loading }: Props = $props();
 </script>
 
 <section class="card" in:fade={{ duration: 800, easing: cubicOut }}>
@@ -26,7 +27,7 @@
         {/if}
     </h2>
 
-    {#if !loading && score > -1}
+    {#if !loading && showScore}
         <p in:fade={{ duration: 800, easing: cubicOut }}>{score} / 5 Rating</p>
     {/if}
 
